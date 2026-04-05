@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Пятница</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<script>
+const API_KEY  = "sq-cIjmykYd3OVFIVvoqdsxuu1UXIWfPJ6o";
+const API_BASE = "https://api.onlysq.ru/ai/openai";
+const MODEL    = "gpt-5.1";
+</script>
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F0EDE8;--sf:#E8E4DD;--sf2:#DEDAD2;--bd:#D0CBC1;
+  --tx:#1C1916;--tx2:#6B6560;--tx3:#A09A94;--ac:#C44B1A;
+  --ubg:#2A2520;--utx:#EDE9E3;--r:12px;--sw:250px;
+  --mono:'IBM Plex Mono',monospace;--serif:'Lora',Georgia,serif;
+  --shadow:0 2px 12px rgba(0,0,0,.07);
+}
+[data-theme="dark"]{
+  --bg:#161412;--sf:#1E1B18;--sf2:#252118;--bd:#333028;
+  --tx:#F0EDE8;--tx2:#9A948E;--tx3:#5C5852;--ac:#E05A20;
+  --ubg:#2A2520;--utx:#EDE9E3;
+  --shadow:0 2px 12px rgba(0,0,0,.35);
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-family:var(--serif);font-size:15px;-webkit-font-smoothing:antialiased;transition:background .2s,color .2s}
+#app{display:flex;height:100vh}
+
+/* sidebar */
+#sb{width:var(--sw);flex-shrink:0;display:flex;flex-direction:column;background:var(--sf);border-right:1px solid var(--bd);transition:transform .25s cubic-bezier(.4,0,.2,1),background .2s}
+.sb-top{padding:18px 14px 12px;border-bottom:1px solid var(--bd)}
+.brand{display:flex;align-items:center;gap:8px;margin-bottom:14px;user-select:none;-webkit-user-select:none}
+.brand-ico{font-size:20px;user-select:none;-webkit-user-select:none}
+.brand-nm{font-size:18px;font-weight:600;letter-spacing:-.3px;user-select:none;-webkit-user-select:none}
+.new-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:7px;padding:8px 12px;background:var(--tx);color:var(--bg);border:none;border-radius:var(--r);font-family:var(--mono);font-size:12px;font-weight:500;cursor:pointer;transition:opacity .15s;user-select:none;-webkit-user-select:none}
+.new-btn:hover{opacity:.8}
+.hist{flex:1;overflow-y:auto;padding:8px 6px}
+.hist::-webkit-scrollbar{width:3px}.hist::-webkit-scrollbar-thumb{background:var(--bd)}
+.hi{display:flex;align-items:center;border-radius:8px;margin-bottom:2px;transition:background .12s}
+.hi:hover,.hi.on{background:var(--sf2)}
+.hi-lbl{flex:1;padding:8px 10px;font-family:var(--mono);font-size:11px;color:var(--tx2);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color .12s;user-select:none;-webkit-user-select:none}
+.hi.on .hi-lbl,.hi:hover .hi-lbl{color:var(--tx)}
+.hi-del{flex-shrink:0;width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:none;border:none;color:var(--tx3);cursor:pointer;border-radius:6px;margin-right:4px;opacity:0;transition:opacity .12s,color .12s}
+.hi:hover .hi-del{opacity:1}
+.hi-del:hover{color:var(--ac)}
+.sb-foot{padding:10px 14px;border-top:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.sb-hint{font-family:var(--mono);font-size:10px;color:var(--tx3);user-select:none;-webkit-user-select:none}
+.theme-btn{width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:none;border:1px solid var(--bd);border-radius:7px;color:var(--tx2);cursor:pointer;transition:all .13s;font-size:14px;user-select:none;-webkit-user-select:none}
+.theme-btn:hover{background:var(--sf2);color:var(--tx)}
+
+/* main */
+#main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+#topbar{display:flex;align-items:center;gap:10px;padding:10px 18px;border-bottom:1px solid var(--bd);background:var(--bg);flex-shrink:0;transition:background .2s}
+.tb{width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:none;border:1px solid transparent;border-radius:9px;color:var(--tx2);cursor:pointer;transition:all .13s;flex-shrink:0;user-select:none;-webkit-user-select:none}
+.tb:hover{background:var(--sf);border-color:var(--bd);color:var(--tx)}
+.tb.red:hover{color:var(--ac);border-color:rgba(196,75,26,.3)}
+.tb-title{flex:1;font-size:15px;font-weight:600;letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;user-select:none;-webkit-user-select:none}
+.tb-r{display:flex;gap:6px}
+#scrl{flex:1;overflow-y:auto;scroll-behavior:smooth}
+#scrl::-webkit-scrollbar{width:4px}
+#scrl::-webkit-scrollbar-thumb{background:var(--bd);border-radius:4px}
+#msgs{max-width:720px;margin:0 auto;padding:28px 22px 14px;display:flex;flex-direction:column}
+
+/* empty */
+.empty{text-align:center;padding:80px 20px;animation:fu .4s ease both;user-select:none;-webkit-user-select:none}
+.empty-ico{font-size:44px;margin-bottom:16px}
+.empty h2{font-size:23px;font-weight:600;margin-bottom:10px;letter-spacing:-.4px}
+.empty p{color:var(--tx2);font-size:14px;line-height:1.7;font-style:italic}
+
+/* messages */
+.mg{display:flex;flex-direction:column;gap:2px;margin-bottom:20px;animation:fu .2s ease both}
+.ml{font-family:var(--mono);font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.8px;color:var(--tx3);margin-bottom:5px;padding:0 2px;user-select:none;-webkit-user-select:none}
+.mg.user .ml{text-align:right}
+.bbl{padding:12px 16px;border-radius:var(--r);font-size:14.5px;line-height:1.72;word-break:break-word;user-select:text;-webkit-user-select:text}
+.mg.user .bbl{background:var(--ubg);color:var(--utx);margin-left:auto;max-width:84%;border-bottom-right-radius:4px}
+.mg.ai   .bbl{background:transparent;color:var(--tx);border:1px solid var(--bd);max-width:100%;border-top-left-radius:4px}
+.bbl img{display:block;max-width:100%;border-radius:8px;margin-top:8px}
+.bbl pre{background:var(--tx);color:var(--bg);border-radius:9px;padding:14px;margin:10px 0;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.6;position:relative}
+.bbl .code-lang{position:absolute;top:8px;right:10px;font-family:var(--mono);font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.5px}
+.bbl del{text-decoration:line-through;opacity:.6}
+.bbl hr{border:none;border-top:1px solid var(--bd);margin:12px 0}
+.bbl h4{font-weight:600;margin:10px 0 4px;font-size:14px}
+.bbl table{border-collapse:collapse;width:100%;margin:10px 0;font-size:13.5px}
+.bbl th,.bbl td{border:1px solid var(--bd);padding:7px 10px;text-align:left}
+.bbl th{background:var(--sf2);font-weight:600}
+.katex-display{margin:10px 0!important;overflow-x:auto}
+.katex{font-size:1em!important}
+.bbl code{font-family:var(--mono);font-size:13px;background:var(--sf2);padding:1px 5px;border-radius:4px;color:var(--ac)}
+.bbl pre code{background:none;color:inherit;padding:0}
+.bbl strong{font-weight:600}.bbl em{font-style:italic}
+.bbl h1,.bbl h2,.bbl h3{font-weight:600;margin:14px 0 6px;letter-spacing:-.2px}
+.bbl ul,.bbl ol{padding-left:20px;margin:6px 0}
+.bbl li{margin-bottom:4px}
+.bbl p{margin-bottom:8px}.bbl p:last-child{margin-bottom:0}
+.dots{display:inline-flex;gap:5px;align-items:center;padding:2px 0}
+.dots span{width:6px;height:6px;border-radius:50%;background:var(--tx3);animation:blink 1.2s infinite}
+.dots span:nth-child(2){animation-delay:.2s}.dots span:nth-child(3){animation-delay:.4s}
+
+/* input */
+#inp-area{flex-shrink:0;padding:10px 22px 16px;background:var(--bg);border-top:1px solid var(--bd);transition:background .2s}
+#inp-box{max-width:720px;margin:0 auto;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);transition:border-color .18s,background .2s;box-shadow:var(--shadow)}
+#inp-box:focus-within{border-color:var(--ac)}
+#img-strip{display:none;padding:10px 14px 0;gap:8px;flex-wrap:wrap}
+#img-strip.on{display:flex}
+.ith{position:relative;width:52px;height:52px;border-radius:8px;overflow:hidden;border:1px solid var(--bd)}
+.ith img{width:100%;height:100%;object-fit:cover;display:block}
+.ith .rm{position:absolute;top:2px;right:2px;width:16px;height:16px;background:rgba(28,25,22,.75);color:#fff;border:none;border-radius:50%;font-size:9px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.inp-row{display:flex;align-items:flex-end;gap:6px;padding:10px 10px 10px 16px}
+#ui{flex:1;background:none;border:none;outline:none;color:var(--tx);font-family:var(--serif);font-size:15px;line-height:1.55;resize:none;max-height:180px;padding:1px 0}
+#ui::placeholder{color:var(--tx3);font-style:italic}
+#ui::-webkit-scrollbar{width:3px}
+#ui::-webkit-scrollbar-thumb{background:var(--bd)}
+.ibtns{display:flex;gap:4px;align-items:flex-end;flex-shrink:0}
+.ib{width:34px;height:34px;display:flex;align-items:center;justify-content:center;border:none;border-radius:9px;cursor:pointer;transition:all .13s;user-select:none;-webkit-user-select:none}
+.ib.at{background:transparent;color:var(--tx3)}.ib.at:hover{background:var(--sf2);color:var(--tx)}
+.ib.snd{background:var(--tx);color:var(--bg)}.ib.snd:hover{opacity:.8}.ib.snd:disabled{opacity:.35;cursor:not-allowed}
+.inp-hint{max-width:720px;margin:5px auto 0;font-family:var(--mono);font-size:10px;color:var(--tx3);text-align:right;padding:0 2px;user-select:none;-webkit-user-select:none}
+
+/* modals */
+.mbk{display:none;position:fixed;inset:0;z-index:200;background:rgba(28,25,22,.5);backdrop-filter:blur(5px);align-items:center;justify-content:center}
+.mbk.open{display:flex}
+.modal{background:var(--bg);border:1px solid var(--bd);border-radius:16px;padding:28px;max-width:340px;width:90%;animation:fu .18s ease;box-shadow:0 8px 40px rgba(0,0,0,.2)}
+.mt{font-size:17px;font-weight:600;margin-bottom:8px}
+.mb{font-size:14px;color:var(--tx2);font-style:italic;line-height:1.6;margin-bottom:22px}
+.ma{display:flex;gap:8px;justify-content:flex-end}
+.mbtn{padding:8px 18px;border-radius:9px;font-family:var(--mono);font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--bd);transition:all .13s;user-select:none;-webkit-user-select:none}
+.mbtn.cancel{background:transparent;color:var(--tx2)}.mbtn.cancel:hover{background:var(--sf);color:var(--tx)}
+.mbtn.ok{background:var(--ac);color:#fff;border-color:var(--ac)}.mbtn.ok:hover{opacity:.85}
+
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes blink{0%,60%,100%{opacity:.3;transform:scale(1)}30%{opacity:1;transform:scale(1.25)}}
+
+@media(max-width:640px){
+  #sb{position:fixed;inset-y:0;left:0;z-index:100;transform:translateX(-100%)}
+  #sb.open{transform:translateX(0)}
+  #msgs{padding:18px 14px 10px}
+  #inp-area{padding:8px 14px 14px}
+}
+@media(min-width:641px){#btn-tog{display:none}}
+</style>
+
+<div id="app">
+  <aside id="sb">
+    <div class="sb-top">
+      <div class="brand">
+        <span class="brand-ico">🌙</span>
+        <span class="brand-nm">Пятница</span>
+      </div>
+      <button class="new-btn" id="btn-new">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v11M1 6.5h11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Новый чат
+      </button>
+    </div>
+    <nav class="hist" id="hist"></nav>
+    <div class="sb-foot">
+      <span class="sb-hint">onlysq · gpt-5.1</span>
+      <button class="theme-btn" id="btn-theme" title="Тема">🌙</button>
+    </div>
+  </aside>
+
+  <main id="main">
+    <header id="topbar">
+      <button class="tb" id="btn-tog">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 4h14M2 9h14M2 14h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+      <span class="tb-title" id="tb-title">Пятница</span>
+      <div class="tb-r">
+        <button class="tb" id="btn-dl" title="Скачать чат">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1v9M4 7l4 4 4-4M1 13h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="tb red" id="btn-clr" title="Очистить чат">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 9h8l1-9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div id="scrl">
+      <div id="msgs">
+        <div class="empty">
+          <div class="empty-ico">🌙</div>
+          <h2>Привет, я Пятница</h2>
+          <p>Скинь задание текстом или фото —<br>отвечу чётко и по делу.</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="inp-area">
+      <div id="inp-box">
+        <div id="img-strip"></div>
+        <div class="inp-row">
+          <textarea id="ui" placeholder="Напиши задание…" rows="1"></textarea>
+          <div class="ibtns">
+            <input type="file" id="fi" accept="image/*" multiple hidden/>
+            <button class="ib at" id="btn-at">
+              <svg width="17" height="17" viewBox="0 0 17 17" fill="none"><path d="M15 8.5l-6.4 6.4a4 4 0 01-5.6-5.7L9.6 2.6a2.5 2.5 0 013.5 3.5L6.5 12.7a1 1 0 01-1.4-1.4L11.2 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <button class="ib snd" id="btn-snd">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M14 8H2M9 3l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <p class="inp-hint">Enter — отправить · Shift+Enter — перенос</p>
+    </div>
+  </main>
+</div>
+
+<!-- Clear modal -->
+<div class="mbk" id="modal-clr">
+  <div class="modal">
+    <p class="mt">Очистить чат?</p>
+    <p class="mb">История сообщений удалится. Это нельзя отменить.</p>
+    <div class="ma">
+      <button class="mbtn cancel" id="m-clr-no">Отмена</button>
+      <button class="mbtn ok" id="m-clr-yes">Очистить</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete chat modal -->
+<div class="mbk" id="modal-del">
+  <div class="modal">
+    <p class="mt">Удалить чат?</p>
+    <p class="mb">Чат будет удалён полностью. Это нельзя отменить.</p>
+    <div class="ma">
+      <button class="mbtn cancel" id="m-del-no">Отмена</button>
+      <button class="mbtn ok" id="m-del-yes">Удалить</button>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+/* ── Защита ── */
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('selectstart', e => {
+  // разрешаем выделение в сообщениях и поле ввода
+  if (['INPUT','TEXTAREA'].includes(e.target.tagName)) return;
+  if (e.target.closest('.bbl')) return;
+  e.preventDefault();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'F12') { e.preventDefault(); return; }
+  if ((e.ctrlKey||e.metaKey) && e.shiftKey && ['I','J','C','K'].includes(e.key.toUpperCase())) { e.preventDefault(); return; }
+  if ((e.ctrlKey||e.metaKey) && e.key.toLowerCase() === 'u') { e.preventDefault(); return; }
+});
+
+/* ── Тема ── */
+const themeBtn = document.getElementById('btn-theme');
+let dark = localStorage.getItem('fri_dark') === '1';
+applyTheme();
+function applyTheme() {
+  document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+  themeBtn.textContent = dark ? '☀️' : '🌙';
+}
+themeBtn.onclick = () => { dark = !dark; localStorage.setItem('fri_dark', dark ? '1' : '0'); applyTheme(); };
+
+/* ── Состояние ── */
+let sessions = JSON.parse(localStorage.getItem('fri_s') || '[]');
+let aid = sessions.length ? sessions[sessions.length-1].id : null;
+let imgs = [], busy = false, pendingDelId = null;
+
+const msgsEl   = document.getElementById('msgs'),
+      scrlEl   = document.getElementById('scrl'),
+      uiEl     = document.getElementById('ui'),
+      sndBtn   = document.getElementById('btn-snd'),
+      fiEl     = document.getElementById('fi'),
+      stripEl  = document.getElementById('img-strip'),
+      histEl   = document.getElementById('hist'),
+      titleEl  = document.getElementById('tb-title'),
+      modalClr = document.getElementById('modal-clr'),
+      modalDel = document.getElementById('modal-del'),
+      sidebar  = document.getElementById('sb');
+
+if (!sessions.length) newSess(); else renderSess(aid);
+renderHist();
+
+/* ── Сессии ── */
+function newSess() {
+  const s = {id: Date.now().toString(), title: 'Новый чат', messages: []};
+  sessions.push(s); aid = s.id; save(); renderSess(aid); renderHist();
+}
+function getSess(id) { return sessions.find(s => s.id === id); }
+function save() { try { localStorage.setItem('fri_s', JSON.stringify(sessions)); } catch(e) {} }
+
+function switchSess(id) {
+  aid = id; renderSess(id); renderHist();
+  if (window.innerWidth < 641) sidebar.classList.remove('open');
+}
+
+function deleteSess(id) {
+  sessions = sessions.filter(s => s.id !== id);
+  if (!sessions.length) { sessions = []; newSess(); return; }
+  if (aid === id) { aid = sessions[sessions.length-1].id; renderSess(aid); }
+  save(); renderHist();
+}
+
+function renderSess(id) {
+  const s = getSess(id); if (!s) return;
+  msgsEl.innerHTML = ''; titleEl.textContent = s.title;
+  if (!s.messages.length) {
+    msgsEl.innerHTML = '<div class="empty"><div class="empty-ico">🌙</div><h2>Привет, я Пятница</h2><p>Скинь задание текстом или фото —<br>отвечу чётко и по делу.</p></div>';
+    return;
+  }
+  s.messages.forEach(m => {
+    const g = addBubble(m.role, m.html || esc(m.content), false);
+  });
+  scrollBot();
+}
+
+function renderHist() {
+  histEl.innerHTML = '';
+  [...sessions].reverse().forEach(s => {
+    const row = document.createElement('div');
+    row.className = 'hi' + (s.id === aid ? ' on' : '');
+
+    const lbl = document.createElement('div');
+    lbl.className = 'hi-lbl'; lbl.textContent = s.title; lbl.title = s.title;
+    lbl.onclick = () => switchSess(s.id);
+
+    const del = document.createElement('button');
+    del.className = 'hi-del'; del.title = 'Удалить чат';
+    del.innerHTML = '<svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 1l9 9M10 1L1 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+    del.onclick = e => { e.stopPropagation(); pendingDelId = s.id; modalDel.classList.add('open'); };
+
+    row.appendChild(lbl); row.appendChild(del);
+    histEl.appendChild(row);
+  });
+}
+
+/* ── Пузыри ── */
+function addBubble(role, html, anim = true) {
+  const e = msgsEl.querySelector('.empty'); if (e) e.remove();
+  const g = document.createElement('div');
+  g.className = 'mg ' + role;
+  if (!anim) g.style.animation = 'none';
+  g.innerHTML = '<div class="ml">' + (role === 'user' ? 'Ты' : 'Пятница') + '</div><div class="bbl">' + html + '</div>';
+  msgsEl.appendChild(g); scrollBot(); return g;
+}
+function scrollBot() { scrlEl.scrollTop = scrlEl.scrollHeight; }
+
+/* ── Форматирование ── */
+function fmt(t) {
+  // 1. Save code blocks
+  const blocks = [];
+  t = t.replace(/```(\w*)\n?([\s\S]*?)```/g, (_, lang, c) => {
+    const escaped = esc(c.trim());
+    const langLabel = lang ? `<span class="code-lang">${lang}</span>` : '';
+    blocks.push(`<pre>${langLabel}<code>${escaped}</code></pre>`);
+    return '\x00BLOCK' + (blocks.length-1) + '\x00';
+  });
+  // 2. Inline code
+  t = t.replace(/`([^`\n]+)`/g, (_, c) => '<code>' + esc(c) + '</code>');
+  // 3. Headers
+  t = t.replace(/^#### (.+)$/gm, '<h4>$1</h4>');
+  t = t.replace(/^### (.+)$/gm,  '<h3>$1</h3>');
+  t = t.replace(/^## (.+)$/gm,   '<h2>$1</h2>');
+  t = t.replace(/^# (.+)$/gm,    '<h1>$1</h1>');
+  // 4. Bold/italic
+  t = t.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
+  t = t.replace(/\*\*(.+?)\*\*/g,     '<strong>$1</strong>');
+  t = t.replace(/\*([^*\n]+?)\*/g,    '<em>$1</em>');
+  t = t.replace(/__(.+?)__/g,         '<strong>$1</strong>');
+  t = t.replace(/_([^_\n]+?)_/g,      '<em>$1</em>');
+  // 5. Strikethrough
+  t = t.replace(/~~(.+?)~~/g, '<del>$1</del>');
+  // 6. Process line by line for lists
+  const lines = t.split('\n');
+  const out = [];
+  let inUl = false, inOl = false;
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const ulMatch = line.match(/^[ \t]*[-*•] (.+)$/);
+    const olMatch = line.match(/^[ \t]*(\d+)\. (.+)$/);
+    if (ulMatch) {
+      if (!inUl) { if (inOl) { out.push('</ol>'); inOl=false; } out.push('<ul>'); inUl=true; }
+      out.push('<li>' + ulMatch[1] + '</li>');
+    } else if (olMatch) {
+      if (!inOl) { if (inUl) { out.push('</ul>'); inUl=false; } out.push('<ol>'); inOl=true; }
+      out.push('<li>' + olMatch[2] + '</li>');
+    } else {
+      if (inUl) { out.push('</ul>'); inUl=false; }
+      if (inOl) { out.push('</ol>'); inOl=false; }
+      out.push(line);
+    }
+  }
+  if (inUl) out.push('</ul>');
+  if (inOl) out.push('</ol>');
+  t = out.join('\n');
+  // 7. Horizontal rule
+  t = t.replace(/^---+$/gm, '<hr>');
+  // 8. Paragraphs — split by blank lines
+  const parts = t.split(/\n{2,}/);
+  t = parts.map(p => {
+    p = p.trim();
+    if (!p) return '';
+    if (/^\x00BLOCK/.test(p)) return p;
+    if (/^<(h[1-4]|ul|ol|li|pre|hr|blockquote)/.test(p)) {
+      return p.replace(/\n/g, '');
+    }
+    // single newlines inside paragraph → <br>
+    return '<p>' + p.replace(/\n/g, '<br>') + '</p>';
+  }).join('');
+  // 9. Restore code blocks
+  t = t.replace(/\x00BLOCK(\d+)\x00/g, (_, i) => blocks[+i]);
+  return t;
+}
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ── Отправка ── */
+sndBtn.onclick = go;
+uiEl.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); go(); } });
+
+async function go() {
+  const txt = uiEl.value.trim();
+  if (!txt && !imgs.length) return;
+  if (busy) return;
+
+  busy = true; sndBtn.disabled = true;
+  const s = getSess(aid);
+  let apiContent, userHtml = '';
+
+  if (imgs.length) {
+    apiContent = [];
+    if (txt) { apiContent.push({type:'text', text:txt}); userHtml += '<p>' + esc(txt) + '</p>'; }
+    imgs.forEach(i => {
+      apiContent.push({type:'image_url', image_url:{url:'data:'+i.mime+';base64,'+i.b64}});
+      userHtml += '<img src="'+i.url+'">';
+    });
+  } else {
+    apiContent = txt;
+    userHtml = '<p>' + esc(txt).replace(/\n/g,'<br>') + '</p>';
+  }
+
+  addBubble('user', userHtml);
+  s.messages.push({role:'user', content:apiContent, html:userHtml});
+  if (s.messages.length === 1 && txt) {
+    s.title = txt.slice(0, 44) + (txt.length > 44 ? '…' : '');
+    titleEl.textContent = s.title;
+  }
+  save(); renderHist();
+  uiEl.value = ''; uiEl.style.height = 'auto'; imgs = []; renderStrip();
+
+  const tg = addBubble('ai', '<div class="dots"><span></span><span></span><span></span></div>');
+
+  // история — последние 20 сообщений
+  const hist = s.messages.slice(0, -1).slice(-20).map(m => ({
+    role: m.role === 'assistant' ? 'assistant' : (m.role === 'user' ? 'user' : m.role),
+    content: typeof m.content === 'string' ? m.content : '[изображение]'
+  }));
+
+  try {
+    const r = await fetch(API_BASE + '/chat/completions', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json', 'Authorization':'Bearer '+API_KEY},
+      body: JSON.stringify({
+        model: MODEL,
+        messages: [
+          {role:'system', content:'Ты — Пятница, умный и точный помощник. Называй себя Пятницей. Отвечай кратко, чётко, по делу — без вступлений и лишних слов. Если нужны шаги — нумеруй. Код пиши в блоках. Если на фото задание — реши его.'},
+          ...hist,
+          {role:'user', content:apiContent}
+        ],
+        temperature: 0.4,
+        max_tokens: 2000
+      })
+    });
+
+    if (!r.ok) {
+      const e = await r.json().catch(() => ({}));
+      throw new Error(e?.error?.message || 'Ошибка ' + r.status);
+    }
+    const data = await r.json();
+    const reply = data.choices?.[0]?.message?.content ?? '(пусто)';
+    const rHtml = fmt(reply);
+    const bbl = tg.querySelector('.bbl');
+    bbl.innerHTML = rHtml;
+    if (window.renderMathInElement) renderMathInElement(bbl, {
+      delimiters:[
+        {left:'$$',right:'$$',display:true},
+        {left:'\\[',right:'\\]',display:true},
+        {left:'$',right:'$',display:false},
+        {left:'\\(',right:'\\)',display:false}
+      ],
+      throwOnError:false
+    });
+    s.messages.push({role:'assistant', content:reply, html:bbl.innerHTML});
+    save();
+  } catch(e) {
+    tg.querySelector('.bbl').innerHTML = '<span style="color:var(--ac)">⚠ ' + esc(e.message) + '</span>';
+  }
+
+  busy = false; sndBtn.disabled = false; scrollBot();
+}
+
+/* ── Изображения ── */
+document.getElementById('btn-at').onclick = () => fiEl.click();
+fiEl.addEventListener('change', () => {
+  [...fiEl.files].forEach(f => {
+    const rd = new FileReader();
+    rd.onload = ev => { imgs.push({url:ev.target.result, b64:ev.target.result.split(',')[1], mime:f.type}); renderStrip(); };
+    rd.readAsDataURL(f);
+  });
+  fiEl.value = '';
+});
+function renderStrip() {
+  stripEl.innerHTML = '';
+  if (!imgs.length) { stripEl.classList.remove('on'); return; }
+  stripEl.classList.add('on');
+  imgs.forEach((img, i) => {
+    const d = document.createElement('div'); d.className = 'ith';
+    d.innerHTML = '<img src="'+img.url+'"><button class="rm">✕</button>';
+    d.querySelector('.rm').onclick = () => { imgs.splice(i,1); renderStrip(); };
+    stripEl.appendChild(d);
+  });
+}
+
+/* ── Auto-resize textarea ── */
+uiEl.addEventListener('input', () => { uiEl.style.height = 'auto'; uiEl.style.height = Math.min(uiEl.scrollHeight, 180) + 'px'; });
+
+/* ── Кнопки ── */
+document.getElementById('btn-new').onclick = () => { newSess(); imgs = []; renderStrip(); };
+document.getElementById('btn-tog').onclick = () => sidebar.classList.toggle('open');
+
+// Очистить чат
+document.getElementById('btn-clr').onclick = () => modalClr.classList.add('open');
+document.getElementById('m-clr-no').onclick  = () => modalClr.classList.remove('open');
+document.getElementById('m-clr-yes').onclick = () => {
+  modalClr.classList.remove('open');
+  const s = getSess(aid);
+  if (s) { s.messages = []; s.title = 'Новый чат'; }
+  save(); renderSess(aid); renderHist();
+};
+
+// Удалить чат
+document.getElementById('m-del-no').onclick  = () => { modalDel.classList.remove('open'); pendingDelId = null; };
+document.getElementById('m-del-yes').onclick = () => {
+  modalDel.classList.remove('open');
+  if (pendingDelId) { deleteSess(pendingDelId); pendingDelId = null; }
+};
+
+// Закрыть модалки по фону
+[modalClr, modalDel].forEach(m => m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); }));
+
+// Скачать чат
+document.getElementById('btn-dl').onclick = () => {
+  const s = getSess(aid);
+  if (!s?.messages.length) return;
+  const txt = s.messages.map(m =>
+    (m.role === 'user' ? 'Ты' : 'Пятница') + ':\n' +
+    (typeof m.content === 'string' ? m.content : '[изображение]')
+  ).join('\n\n────────────────────\n\n');
+  const blob = new Blob([txt], {type:'text/plain;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url;
+  a.download = 'pyatnitsa_' + new Date().toISOString().slice(0,10) + '.txt';
+  a.click(); URL.revokeObjectURL(url);
+};
+</script>
+</body>
+</html>
